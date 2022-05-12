@@ -1,12 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import { Container } from "./styles";
 
+interface TransactionProps {
+  id: number;
+  title: string;
+  amnount: number;
+  type: string;
+  category: string;
+  createdAt: string;
+}
+
 export function TransactionTable() {
+  const [transactions, setTransactions] = useState<TransactionProps[]>([])
+
+
   useEffect(() => {
     api.get('transactions')
-      .then(response => console.log(response.data))
+      .then(response => setTransactions(response.data.transactions))
   }, [])
+
   return (
     <Container>
       <table>
@@ -19,18 +32,26 @@ export function TransactionTable() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="title">Desenvolvimento de web site</td>
-            <td className="deposit">1200,00 kzs</td>
-            <td>Desenvolvimento</td>
-            <td>20/2/2021</td>
-          </tr>
-          <tr>
-            <td>Alguel de web site</td>
-            <td className="withdraw">100,00 kzs</td>
-            <td>Casa</td>
-            <td>10/2/2021</td>
-          </tr>
+          {
+            transactions.map(transaction => (
+                <tr key={transaction.id}>
+                  <td className="title">{transaction.title}</td>
+                  <td className={transaction.type}>
+                    {new Intl.NumberFormat('pt-Br', {
+                      style: 'currency',
+                      currency: 'AOA'
+                    }).format(transaction.amnount)}
+                  </td>
+                  <td>{transaction.category}</td>
+                  <td>
+                  {new Intl.DateTimeFormat('pt-Br').format(
+                    new Date(transaction.createdAt)
+                  )}
+                  </td>
+                </tr>
+              )
+            )
+          }
         </tbody>
       </table>
     </Container>
