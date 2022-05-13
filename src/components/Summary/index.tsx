@@ -2,9 +2,29 @@ import { Container } from "./styles";
 import entradasImg from '../../assets/Entradas.svg'
 import saidasImg from '../../assets/Saídas.svg'
 import totalImg from '../../assets/Total.svg'
+import { useContext } from "react";
+import { TransactionsContext } from "../../TransactionsContext";
 
 
 export function Summary() {
+  const { transactions } = useContext(TransactionsContext);
+  
+  
+  const summary = transactions.reduce((acc, transaction) => {
+    if (transaction.type === 'deposit') {
+      acc.deposits += transaction.amnount
+      acc.total += transaction.amnount
+    } else {
+      acc.withdraw += transaction.amnount
+      acc.total -= transaction.amnount
+    }
+    return acc;
+  }, {
+    deposits: 0,
+    withdraw: 0,
+    total: 0
+  })
+
   return (
     <Container>
       <div>
@@ -13,7 +33,11 @@ export function Summary() {
           <img src={entradasImg} alt="Entradas" />
         </header>
         <strong>
-         + 1000,00 Kzs
+          +
+          {new Intl.NumberFormat('pt-Br', {
+            style: 'currency',
+            currency: 'AOA'
+          }).format(summary.deposits)}
         </strong>
       </div>
 
@@ -23,7 +47,11 @@ export function Summary() {
           <img src={saidasImg} alt="Saídas" />
         </header>
         <strong>
-         - 500,00 Kzs
+          - 
+          {new Intl.NumberFormat('pt-Br', {
+            style: 'currency',
+            currency: 'AOA'
+          }).format(summary.withdraw)}
         </strong>
       </div>
 
@@ -33,7 +61,10 @@ export function Summary() {
           <img src={totalImg} alt="Total" />
         </header>
         <strong>
-          500,00 Kzs
+        {new Intl.NumberFormat('pt-Br', {
+            style: 'currency',
+            currency: 'AOA'
+          }).format(summary.total)}
         </strong>
       </div>
 
