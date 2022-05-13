@@ -2,8 +2,7 @@ import { FormEvent, useState, useContext } from "react";
 import Modal from "react-modal";
 import entradasImg from '../../assets/Entradas.svg'
 import saidasImg from '../../assets/Saídas.svg'
-import { api } from "../../services/api";
-import { TransactionsContext } from "../../TransactionsContext";
+import { useTransactions } from "../../hooks/useTransactions";
 import { Container, TransactionTypeContainer, RadioBox } from "./styles";
 
 interface NewTransactionModalProps {
@@ -12,7 +11,7 @@ interface NewTransactionModalProps {
 }
 
 export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
-  const { createTransaction } = useContext(TransactionsContext);
+  const { createTransaction } = useTransactions();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
